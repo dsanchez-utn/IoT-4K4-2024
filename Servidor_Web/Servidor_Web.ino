@@ -29,10 +29,8 @@ void setup() {
   Serial.begin(115200);
   Serial.println("");
 
-  pinMode(PIN_RELAY, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(PIN_RELAY, LOW);
-
+  
   // Conexión WIFI
   WiFi.begin(ssid, password);
   //Cuenta 500 milisegundos para preguntar nuevamente si se pudo conectar
@@ -55,24 +53,12 @@ void loop() {
     
     while (client.connected()) {    // loop mientras el cliente está conectado
 
-      //Serial.println("Nuevo cliente conectado");
-
       if (client.available()) {     // si hay bytes para leer desde el cliente. Devuelve el número de bytes disponibles para lectura en el búfer de entrada del cliente
 
-      //Serial.println("Encuentra Bytes disponibles");
-
         char c = client.read();     // lee un byte y lo elimina del buffer
-
-        //Serial.print("c --> ");
-        //Serial.println(c);
-        
         header += c;
 
-        //Serial.println(header);
-
         if (c == '\n') {  // si el byte es un caracter de salto de linea
-
-          //Serial.println(header);
 
           if (currentLine.length() == 0) {
             client.println("HTTP/1.1 200 OK");        //la solicitud HTTP se ha procesado correctamente.
@@ -83,10 +69,8 @@ void loop() {
             // enciende y apaga el GPIO
             if (header.indexOf("GET /on") >= 0) {   //busca la primera aparición de "GET /on" y devuelve la posición donde se encuentra. Si no se encuentra devuelve -1
               digitalWrite(LED_BUILTIN, HIGH);
-              digitalWrite(PIN_RELAY, HIGH);
             } else if (header.indexOf("GET /off") >= 0) {
               digitalWrite(LED_BUILTIN, LOW);
-              digitalWrite(PIN_RELAY, LOW);
             }
 
             // Muestra la página web
